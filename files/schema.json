@@ -1,0 +1,9 @@
+{
+    "name": "airport",
+    "tuples_limit": 1000,
+    "structure": {
+    "airplane": ["model", "renovated", "departure"],
+    "passengers": ["name", "surname", "modelAirplane", "departure"],
+    "engineer": ["name", "modelWork", "startWork"]
+    }
+}
