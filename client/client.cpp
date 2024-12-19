@@ -45,6 +45,11 @@ int main() {
             continue;
         }
 
+        if (buffer.size() == 0){
+            cerr << "Input something" << endl;
+            continue;
+        }
+
         send(sock, buffer.c_str(), buffer.size(), 0);
         ssize_t recvLen = recv(sock, &buff, sizeof buff, 0);
 
