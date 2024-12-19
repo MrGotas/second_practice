@@ -5,7 +5,8 @@
 //SELECT engineer.modelWork FROM engineer
 //SELECT engineer.modelWork, passengers.modelAirplane FROM engineer, passengers WHERE engineer.modelWork = 'boing_707' OR engineer.modelWork = passengers.modelAirplane
 
-void selectCom (string userCommand, string baseName){
+string selectCom(string userCommand, string baseName){
+    string message;
     stringstream ss(userCommand);
     string temp;
     ss >> temp; // SELECT
@@ -19,15 +20,15 @@ void selectCom (string userCommand, string baseName){
         }
 
         if (!checkOutputCol(temp, baseName)){
-            cerr << "ERROR_13: Unknown condition." << endl;
-            return;
+            message = "ERROR_13: Unknown condition.";
+            return message;
         }
         outputCol.push(temp);
     }
 
     if (!wasFrom){ // не встретился FROM
-        cerr << "ERROR_14: Unknown condition." << endl;
-        return;
+        message = "ERROR_14: Unknown condition.";
+        return message;
     }
 
     StrArray fromTable;
@@ -42,8 +43,8 @@ void selectCom (string userCommand, string baseName){
     }
 
     if (!checkFrom(fromTable, outputCol)){
-        cerr << "ERROR_15: Unknown condition." << endl;
-        return;
+        message = "ERROR_15: Unknown condition.";
+        return message;
     }
 
     StrArray condArr;
@@ -53,14 +54,14 @@ void selectCom (string userCommand, string baseName){
         }
 
         if (!correctCond(condArr, fromTable, "SELECT")){
-            cerr << "ERROR_16: Unknown condition." << endl;
-            return;
+            message = "ERROR_16: Unknown condition.";
+            return message;
         }
     }
 
     if (isLockTables(fromTable, baseName)){ //Проверка блокировки таблицы
-        cout << "The table is currently locked for use, try again later." << endl;
-        return;
+        message = "The table is currently locked for use, try again later.";
+        return message;
 
     }else lockTables(fromTable, baseName, "1"); // блокируем на время работы
 
@@ -82,12 +83,14 @@ void selectCom (string userCommand, string baseName){
     string tempStr;
     crossJoin(baseName, outputTables, nowTable, tempStr);
 
-    string result = getResStr(baseName, outputCol, tokens);
+    message = getResStr(baseName, outputCol, tokens);
     
-    //fs::remove(baseName + "/temp.csv");
-    correctOutput(result, outputCol.sizeM());
+    fs::remove(baseName + "/temp.csv");
+    //correctOutput(result, outputCol.sizeM());
 
     lockTables(fromTable, baseName, "0");
+
+    return message;
 }
 
 void lockTables(StrArray& tables, string baseName, string command){

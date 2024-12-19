@@ -12,9 +12,9 @@ namespace fs = filesystem;
 using json = nlohmann::json;
 
 int countWords (string words);
-bool checkSyntax(string& tableName, string& values, string baseName, string userCommand, string command);
+bool checkSyntax(string& tableName, string& values, string baseName, string userCommand, string command, string& message);
 bool checkTable(string tablePath);
-bool isLock(string tablePath, string tableName);
+bool isLock(string tablePath, string tableName, string& message);
 void lockTable (string tablePath, string tableName);
 void unlockTable (string tablePath, string tableName);
 bool columnExist (string tableName, string columnName);

@@ -12,10 +12,10 @@ int countWords (string words){
     return countWords;
 }
 
-bool checkSyntax(string& tableName, string& values, string baseName, string userCommand, string command){
+bool checkSyntax(string& tableName, string& values, string baseName, string userCommand, string command, string& message){
     int countWor = countWords(userCommand); // проверка кол-ва слов
     if (command == "INS" && countWor < 5 || command == "DEL" && countWor < 7){
-        cerr << "ERROR_2: Unknown command." << endl;
+        message = "ERROR_2: Unknown command.";
         return false;
     }
 
@@ -25,7 +25,7 @@ bool checkSyntax(string& tableName, string& values, string baseName, string user
 
     ss >> temp;
     if (command == "INS" && temp != "INTO" || command == "DEL" && temp != "FROM"){
-        cerr << "ERROR_3: Unknown command." << endl;
+        message =  "ERROR_3: Unknown command.";
         return false;
     }
 
@@ -33,7 +33,7 @@ bool checkSyntax(string& tableName, string& values, string baseName, string user
 
     ss >> temp;
     if (command == "INS" && temp != "VALUES" || command == "DEL" && temp != "WHERE"){
-        cerr << "ERROR_4: Unknown command." << endl;
+        message =  "ERROR_4: Unknown command.";
         return false;
     }
 
@@ -52,11 +52,11 @@ bool checkTable(string tablePath){
     }
 }
 
-bool isLock(string tablePath, string tableName){
+bool isLock(string tablePath, string tableName, string& message){
     string path = tablePath + "/" + tableName + "_lock";
     ifstream file (path);
     if (!file.is_open()){
-        cerr << "ERROR_8: Unable to open file: " << path << endl;
+        message =  "ERROR_8: Unable to open file: " + path + "\n";
         return false;
     }
 
@@ -69,7 +69,7 @@ bool isLock(string tablePath, string tableName){
     }else if (value == 0){
         return false;
     }else{
-        cerr << "ERROR_9: Unknown value from file: " << path << endl;
+        message =  "ERROR_9: Unknown value from file: " + path + "\n";
         return false;
     }
 }

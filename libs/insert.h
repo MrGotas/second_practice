@@ -16,6 +16,6 @@ int countCol(string tableName);
 bool checkValues (StrArray& valuesToCol);
 bool fileAvail (string nextCsv, string tablePath);
 void checkCsv (string tablePath, string tableName, string& csv);
-void insertCom(string userCommand, string baseName);
+string insertCom(string userCommand, string baseName);
 
 #endif // INSERT

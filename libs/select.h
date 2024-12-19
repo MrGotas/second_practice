@@ -32,6 +32,6 @@ void massWithoutCol (StrArray& outputCol, StrArray& outputTables);
 string getValueFromLine(string line, int columnNum);
 bool isLockTables(StrArray& tables, string baseName);
 void lockTables(StrArray& tables, string baseName, string command);
-void selectCom(string userCommand, string baseName);
+string selectCom(string userCommand, string baseName);
 
 #endif // SELECT

@@ -1,15 +1,15 @@
 #include "libs/insert.h"
 
-void insertCom(string userCommand, string baseName){
-    string tableName, values;
-    if (!checkSyntax(tableName, values, baseName, userCommand, "INS")){
-        return;
+string insertCom(string userCommand, string baseName){
+    string tableName, values, message = "";
+    if (!checkSyntax(tableName, values, baseName, userCommand, "INS", message)){
+        return message;
     }
 
     string tablePath = baseName + "/" + tableName;
     if (!checkTable(tablePath)){
-        cerr << "ERROR_5: Unknown table name." << endl;
-        return;
+        message = "ERROR_5: Unknown table name.";
+        return message;
     }
 
     stringstream ss (values);
@@ -22,18 +22,18 @@ void insertCom(string userCommand, string baseName){
     int countCols = countCol(tableName); // кол-во столбцов в таблице
 
     if (countCols != valuesToCol.sizeM()){
-        cerr << "ERROR_6: Incorrect count of values." << endl;
-        return;
+        message = "ERROR_6: Incorrect count of values.";
+        return message;
     }
 
     if (checkValues(valuesToCol) == false){ //проверка синтаксиса вводимых значений
-        cerr << "ERROR_7: Incorrect syntax values." << endl;
-        return;
+        message = "ERROR_7: Incorrect syntax values.";
+        return message;
     }
 
-    if (isLock(tablePath, tableName)){ //Проверка блокировки таблицы
-        cout << "The table is currently locked for use, try again later." << endl;
-        return;
+    if (isLock(tablePath, tableName, message)){ //Проверка блокировки таблицы
+        message += "The table is currently locked for use, try again later.";
+        return message;
     }else{
         lockTable(tablePath, tableName); // блокируем на время работы
     }
@@ -41,10 +41,11 @@ void insertCom(string userCommand, string baseName){
     string pkFile = tablePath + "/" + tableName + "_pk";
     ifstream filePk(pkFile);
     if (!filePk.is_open()){
-        cerr << "ERROR_10: Unable to open file: " << pkFile << endl;
+        message = "ERROR_10: Unable to open file: " + pkFile;
         unlockTable(tablePath, tableName);
-        return;
+        return message;
     }
+
     int pkVal;
     filePk >> pkVal;
     filePk.close();
@@ -67,6 +68,12 @@ void insertCom(string userCommand, string baseName){
     filePkEnd << pkVal + 1;
 
     unlockTable(tablePath, tableName);
+
+    if (message == ""){
+        return "INSERT successful.";
+    }
+
+    return message;
 }
 
 int countCol(string tableName){

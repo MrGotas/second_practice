@@ -3,16 +3,16 @@
 // DELETE FROM airplane WHERE airplane.model = 'boing_707'
 // DELETE FROM airplane WHERE airplane.model = 'boing_707' OR airplane.model = engineer.name
 
-void delCom(string userCommand, string baseName){
-    string tableName, conditions;
-    if (!checkSyntax(tableName, conditions, baseName, userCommand, "DEL")){
-        return;
+string delCom(string userCommand, string baseName){
+    string tableName, conditions, message = "";
+    if (!checkSyntax(tableName, conditions, baseName, userCommand, "DEL", message)){
+        return message;
     }
 
     string tablePath = baseName + "/" + tableName;
     if (!checkTable(tablePath)){
-        cerr << "ERROR_11: Unknown table name." << endl;
-        return;
+        message =  "ERROR_11: Unknown table name.";
+        return message;
     }
 
     stringstream ss (conditions);
@@ -25,13 +25,13 @@ void delCom(string userCommand, string baseName){
     StrArray table;
     table.push(tableName);
     if (!correctCond(condArr, table, "DELETE")){
-        cerr << "ERROR_12: Unknown condition." << endl;
-        return;
+        message =  "ERROR_12: Unknown condition.";
+        return message;
     }
 
-    if (isLock(tablePath, tableName)){ //Проверка блокировки таблицы
-        cout << "The table is currently locked for use, try again later." << endl;
-        return;
+    if (isLock(tablePath, tableName, message)){ //Проверка блокировки таблицы
+        message += "The table is currently locked for use, try again later.";
+        return message;
     }else{
         lockTable(tablePath, tableName); // блокируем на время работы
     }
@@ -104,6 +104,12 @@ void delCom(string userCommand, string baseName){
     }
 
     unlockTable(tablePath, tableName);
+    
+    if (message == ""){
+        return "DELETE successful.";
+    }
+
+    return message;
 }
 
 bool checkVals (string line, string condVal, int valuePos){
