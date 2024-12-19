@@ -18,12 +18,13 @@ void requestProcessing(const int clientSocket, const sockaddr_in& clientAddress,
         const ssize_t userRead = read(clientSocket, userMessage, 1024);
 
         if (userRead <= 0){
-            cerr << "Сlient [" << clientAddress.sin_addr.s_addr << "] disconnected\n";
+            cerr << "Сlient [" << clientAddress.sin_addr.s_addr << "] disconnected" << endl;
             isExit = true;
             continue;
         }
 
         if (string(userMessage) == "EXIT"){
+            cerr << "Сlient [" << clientAddress.sin_addr.s_addr << "] disconnected" << endl;
             isExit = true;
             continue;
         }
